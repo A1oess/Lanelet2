@@ -1,7 +1,7 @@
-ARG DISTRIBUTION=18.04
+ARG DISTRIBUTION=20.04
 FROM ubuntu:${DISTRIBUTION} AS lanelet2_deps
 
-ARG ROS_DISTRO=melodic
+ARG ROS_DISTRO=noetic
 ARG ROS=ros
 SHELL ["/bin/bash", "-c"]
 
@@ -115,3 +115,18 @@ RUN if [ "$ROS" = "ros" ]; \
     fi; \
     /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && env && echo $ROS && $BUILD_CMD"
 
+
+# GRIT
+RUN sudo apt-get update && sudo apt-get install -y python3-pip graphviz python3-pyqt5 && sudo pip3 install --upgrade python-dateutil
+RUN mkdir zhaoxh && cd zhaoxh && git clone https://github.com/uoe-agents/GRIT.git GRIT && cd GRIT && pip3 install -e .
+ENV MPLBACKEND=Qt5Agg
+
+# IGP2
+RUN sudo apt-get install sed
+RUN cd zhaoxh && git clone https://github.com/uoe-agents/IGP2.git IGP2 && cd IGP2 && sed -i '/carla/d' requirements.txt \
+    && cd igp2 && sed -i '/carla/d' __init__.py \
+    && cd .. && pip3 install -e .
+
+# OGRIT
+RUN cd zhaoxh && git clone https://github.com/uoe-agents/OGRIT.git OGRIT && cd OGRIT && pip3 install -e . 
+RUN  -rf /zhaoxh

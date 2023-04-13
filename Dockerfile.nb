@@ -1,0 +1,4 @@
+FROM lanelet2:latest
+RUN rm -rf zhaoxh
+RUN sudo apt install -y openssh-server 
+RUN echo "developer:1" | sudo chpasswd
